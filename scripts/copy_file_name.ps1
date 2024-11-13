@@ -1,0 +1,1 @@
+Get-ChildItem | ForEach-Object { "`t`"$($_.Name)`"," } | Out-File filelist.txt -Encoding utf8; (Get-Content filelist.txt | Set-Content filelist.txt -Encoding utf8 -Force -Value ("const images = [" + [string]::Join("", (Get-Content filelist.txt)) + "`t`"];"))
