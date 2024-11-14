@@ -1,7 +1,7 @@
-# Directory path (cần thay đổi theo thư mục của bạn)
-$directoryPath = "C:\Your\Directory\Path"
+# Lấy đường dẫn của thư mục hiện tại
+$directoryPath = Get-Location
 
-# Function to generate a random suffix
+# Hàm để tạo hậu tố ngẫu nhiên
 function Get-RandomSuffix {
     $chars = "abcdefghijklmnopqrstuvwxyz0123456789"
     $suffix = ""
@@ -11,21 +11,21 @@ function Get-RandomSuffix {
     return "-" + $suffix
 }
 
-# Get all files in the specified directory
+# Lấy tất cả các file trong thư mục hiện tại
 $files = Get-ChildItem -Path $directoryPath -File
 
 foreach ($file in $files) {
-    # Remove spaces, parentheses, and special characters (except hyphen and dot for file extension)
+    # Loại bỏ khoảng trắng, dấu ngoặc và ký tự đặc biệt (trừ dấu '-' và '.' cho phần mở rộng)
     $newName = ($file.Name -replace '[\s\(\)\[\]\{\}~!@#$%^&+=`]', '')
 
-    # If the filename already exists, add a random suffix
+    # Nếu tên file mới đã tồn tại, thêm hậu tố ngẫu nhiên để tránh trùng lặp
     while (Test-Path -Path (Join-Path -Path $directoryPath -ChildPath $newName)) {
         $nameWithoutExtension = [System.IO.Path]::GetFileNameWithoutExtension($newName)
         $extension = $file.Extension
         $newName = $nameWithoutExtension + (Get-RandomSuffix) + $extension
     }
 
-    # Rename the file
+    # Đổi tên file
     $newPath = Join-Path -Path $directoryPath -ChildPath $newName
     Rename-Item -Path $file.FullName -NewName $newName
     Write-Host "Renamed '$($file.Name)' to '$newName'"
